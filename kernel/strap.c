@@ -47,6 +47,7 @@ void handle_mtimer_trap() {
 // stval: the virtual address that causes pagefault when being accessed.
 //
 void handle_user_page_fault(uint64 mcause, uint64 sepc, uint64 stval) {
+  uint64 pa;
   sprint("handle_page_fault: %lx\n", stval);
   switch (mcause) {
     case CAUSE_STORE_PAGE_FAULT:
@@ -55,7 +56,7 @@ void handle_user_page_fault(uint64 mcause, uint64 sepc, uint64 stval) {
       // hint: first allocate a new physical page, and then, maps the new page to the
       // virtual address that causes the page fault.
       //panic( "You need to implement the operations that actually handle the page fault in lab2_3.\n" );
-      uint64 pa = (uint64)alloc_page();
+      pa = (uint64)alloc_page();
       if ((void *)pa == NULL)
         panic("Can not allocate a new physical page.\n");
       map_pages(current->pagetable, ROUNDDOWN(stval, PGSIZE), PGSIZE, pa,
